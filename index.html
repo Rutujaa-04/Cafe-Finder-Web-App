@@ -17,10 +17,10 @@
   <div class="page-shell">
     <section class="hero">
       <div class="hero-copy">
-        <div class="eyebrow">GPS-first cafe radar</div>
-        <h1>Nearby cafes, the moment you want one.</h1>
+        <div class="eyebrow">Coffee radar that reacts with you</div>
+        <h1>Nearby cafes, matched to the moment.</h1>
         <p class="hero-text">
-          Built for morning runs, commute breaks, and spontaneous coffee stops. Live location is the main flow, while
+          Built for quick morning grabs, focused afternoon resets, and spontaneous late-night hangs. Live location is the main flow, while
           city search stays ready when you want to scout another neighborhood or plan an intercity cafe hunt.
         </p>
 
@@ -31,7 +31,7 @@
         </div>
 
         <div class="hero-actions">
-          <button id="location-btn" class="btn btn-primary">Find Cafes Near Me</button>
+          <button id="location-btn" class="btn btn-primary">Find Cafes Near Me ☕</button>
           <button class="btn btn-secondary" data-scroll-target="#search-panel">Search Another City</button>
         </div>
 
@@ -69,10 +69,27 @@
 
           <div class="location-spotlight">
             <div class="spotlight-copy">
-              <strong>Nearby mode</strong>
-              <p>Best for runs, walks, office breaks, and fast coffee decisions.</p>
+              <strong id="spotlight-title">Morning Run Mode</strong>
+              <p id="spotlight-text">Fast, close-by cafes rise to the top when you need a quick grab-and-go stop.</p>
             </div>
-            <span class="spotlight-badge">Live GPS</span>
+            <span class="spotlight-badge" id="spotlight-badge">Auto right now</span>
+          </div>
+
+          <div class="coffee-mode-panel" aria-label="Coffee mode selector">
+            <div class="mode-panel-head">
+              <span class="field-label">Coffee Mode</span>
+              <p id="mode-summary">Auto-picked from the time of day.</p>
+            </div>
+
+            <div class="mode-toggle" role="group" aria-label="Choose coffee mode">
+              <button class="mode-btn" data-mode="morning" aria-pressed="false">☀️ Morning Run Mode</button>
+              <button class="mode-btn" data-mode="work" aria-pressed="false">💻 Work Break Mode</button>
+              <button class="mode-btn" data-mode="night" aria-pressed="false">🌙 Late Night Mode</button>
+            </div>
+
+            <p class="mode-description" id="mode-description">
+              Fast stops, focused breaks, or aesthetic hangouts. Switch the mood and the list adapts.
+            </p>
           </div>
 
           <div class="manual-search">
@@ -120,7 +137,7 @@
             </div>
             <div class="flow-step">
               <span>03</span>
-              <p>Save favorites, open directions, and check reviews on Maps.</p>
+              <p>Save cafes to your personal coffee map, then open directions and reviews on Maps.</p>
             </div>
           </div>
         </div>
@@ -131,8 +148,8 @@
       <section class="results-topbar">
         <div>
           <div id="results-status" class="status-pill">Nearby search ready</div>
-          <h2>Nearby cafe board</h2>
-          <p class="results-note">Live location comes first. City search stays available when you want to plan farther out.</p>
+          <h2 id="results-title">Nearby cafe board</h2>
+          <p id="results-note" class="results-note">Live location comes first. City search stays available when you want to plan farther out.</p>
         </div>
 
         <div class="results-actions">
@@ -141,9 +158,10 @@
             <button class="view-btn" data-view="list">List</button>
           </div>
           <select id="sort-select" aria-label="Sort cafes">
+            <option value="smart">Sort: Best for this mode</option>
             <option value="distance">Sort: Closest first</option>
             <option value="name">Sort: Name A-Z</option>
-            <option value="favorites">Sort: Saved first</option>
+            <option value="favorites">Sort: Coffee map first</option>
           </select>
         </div>
       </section>
@@ -155,6 +173,18 @@
         <button class="filter-chip" data-range="5">Coffee mission</button>
       </section>
 
+      <section class="saved-map-card" aria-label="Saved cafes overview">
+        <div>
+          <span class="saved-map-kicker">Our coffee map</span>
+          <h3>Your personal coffee map</h3>
+          <p id="saved-map-text">No saved cafes yet. Start building your personal coffee map.</p>
+        </div>
+        <div class="saved-map-stat">
+          <strong id="saved-map-count">0</strong>
+          <span>saved cafes</span>
+        </div>
+      </section>
+
       <div id="loading" class="loading-state hidden" aria-live="polite">
         <div class="loading-orb"></div>
         <p>Scanning the map for nearby coffee stops...</p>
@@ -164,7 +194,7 @@
 
       <section id="results-section" class="results-section">
         <div id="empty-state" class="empty-state">
-          <p>Tap into live location for nearby cafes now, or use city search when you want to scout another place.</p>
+          <p id="empty-state-message">No cafes yet. Let's fix that. Tap "Find Cafes Near Me" ☕</p>
         </div>
         <div id="cards-container" class="cards-grid"></div>
       </section>
