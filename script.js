@@ -286,6 +286,9 @@ function getCityCoords(city) {
       const lat = parseFloat(data[0].lat);
       const lon = parseFloat(data[0].lon);
       appState.searchLabel = city;
+      // Reset filter to "all" for city searches so distance from user doesn't hide results
+      appState.rangeKm = "all";
+      syncFilterButtons();
       fetchCafesByCoords(lat, lon, 10000, 50);
     })
     .catch(function () {
