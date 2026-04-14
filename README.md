@@ -3,7 +3,7 @@
 
 A location-aware cafe discovery app that surfaces nearby cafes based on where you are and what kind of coffee moment you're having — a quick morning grab, a focused work break, or a late-night hangout.
 
-Live demo → [add your link here after deploying]
+Live demo → https://rutujaa-04.github.io/Cafe-Finder-Web-App/
 
 ---
 
