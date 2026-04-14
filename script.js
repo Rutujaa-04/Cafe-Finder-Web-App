@@ -124,7 +124,7 @@ function handleLocationSearch() {
     function (position) {
       userRealLat = position.coords.latitude;
       userRealLon = position.coords.longitude;
-      appState.searchLabel = "Your location";
+      appState.searchLabel = "your live location";
       fetchCafesByCoords(userRealLat, userRealLon, 3000, 50);
     },
     function () {
@@ -139,7 +139,7 @@ function runCitySearch(city) {
     showError("Type a city name to start the search.");
     return;
   }
-  showLoading("Looking up " + city + "...");
+  showLoading("Looking up " + city + " and pulling more map-listed cafes...");
   getCityCoords(city);
 }
 
@@ -158,7 +158,6 @@ function getCityCoords(city) {
       const lat = parseFloat(data[0].lat);
       const lon = parseFloat(data[0].lon);
       appState.searchLabel = city;
-      // For city search use 10km radius and 50 results
       fetchCafesByCoords(lat, lon, 10000, 50);
     })
     .catch(function () {
@@ -166,63 +165,57 @@ function getCityCoords(city) {
     });
 }
 
-// Unified cafe fetcher — works for both GPS and city search
 function fetchCafesByCoords(lat, lon, radiusMeters, limit) {
-  // Use a bounding box sized to roughly match the radius
   const delta = (radiusMeters / 111320);
   const url = "https://nominatim.openstreetmap.org/search?q=cafe&format=json&limit=" + limit + "&bounded=1&viewbox=" + (lon - delta) + "," + (lat + delta) + "," + (lon + delta) + "," + (lat - delta);
 
-  setTimeout(function () {
-    fetch(url)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        hideLoading();
+  fetch(url)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      hideLoading();
 
-        if (!data.length) {
-          showError("No cafes found in this area. Try expanding your search.");
-          return;
-        }
+      if (!data.length) {
+        showError("No cafes found in this area. Try expanding your search.");
+        return;
+      }
 
-        appState.cafes = data.map(function (cafe) {
-          return normalizeCafe(cafe, lat, lon);
-        });
-
-        updateStatus(appState.cafes.length + " cafes found around " + appState.searchLabel);
-        renderCafes();
-
-        document.getElementById("results-section").scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      })
-      .catch(function () {
-        showError("Cafe search failed. Please try again.");
+      appState.cafes = data.map(function (cafe) {
+        return normalizeCafe(cafe, lat, lon);
       });
-  }, 800);
+
+      renderCafes();
+
+      document.getElementById("results-section").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    })
+    .catch(function () {
+      showError("Cafe search failed. Please try again.");
+    });
 }
 
 function normalizeCafe(cafe, originLat, originLon) {
   const lat = parseFloat(cafe.lat);
   const lon = parseFloat(cafe.lon);
-
-  // Always calculate distance from user's real GPS if available
   const fromLat = userRealLat !== null ? userRealLat : originLat;
   const fromLon = userRealLon !== null ? userRealLon : originLon;
-
   const distanceKm = getDistanceKm(fromLat, fromLon, lat, lon);
-  const name = cafe.display_name.split(",")[0];
+  const address = String(cafe.display_name || "Address unavailable");
+  const name = address.split(",")[0].trim() || "Cafe";
+  const id = name + "-" + lat + "-" + lon;
 
   return {
-    id: name + "-" + lat + "-" + lon,
+    id: id,
     name: name,
-    address: cafe.display_name,
+    address: address,
     lat: lat,
     lon: lon,
     distanceKm: distanceKm,
     vibe: getVibeLabel(distanceKm),
-    saved: appState.favorites.has(name + "-" + lat + "-" + lon)
+    saved: appState.favorites.has(id)
   };
 }
 
@@ -246,7 +239,7 @@ function renderCafes() {
   }
 
   emptyState.classList.add("hidden");
-  updateStatus(filteredCafes.length + " cafes in " + appState.searchLabel);
+  updateStatus(buildResultsStatus(filteredCafes.length));
   cardsContainer.innerHTML = filteredCafes.map(function (cafe) {
     return createCafeCard(cafe);
   }).join("");
@@ -277,27 +270,35 @@ function createCafeCard(cafe) {
   const mapLink = "https://www.openstreetmap.org/?mlat=" + cafe.lat + "&mlon=" + cafe.lon + "#map=17/" + cafe.lat + "/" + cafe.lon;
   const directionsLink = "https://www.google.com/maps/search/?api=1&query=" + cafe.lat + "," + cafe.lon;
   const reviewsLink = "https://www.google.com/maps/search/" + encodeURIComponent(cafe.name) + "/@" + cafe.lat + "," + cafe.lon + ",17z";
+  const saveLabel = cafe.saved ? "Saved to favorites" : "Add to favorites";
+  const saveAriaLabel = cafe.saved
+    ? "Remove " + cafe.name + " from favorites"
+    : "Add " + cafe.name + " to favorites";
 
   return `
     <article class="card">
-      <div class="card-topline">
-        <span class="card-tag">☕ Cafe</span>
-        <span class="favorite-pill">${cafe.vibe}</span>
-      </div>
-      <h3>${escapeHtml(cafe.name)}</h3>
-      <p class="card-address">${escapeHtml(cafe.address)}</p>
-      <div class="card-meta">
-        <span class="distance-pill">📍 ${distanceText}</span>
-        <span class="distance-pill">${getDistanceBand(cafe.distanceKm)}</span>
-      </div>
-      <div class="card-footer">
-        <div class="card-actions">
-          <a class="action-btn" href="${directionsLink}" target="_blank" rel="noopener noreferrer">Directions</a>
-          <a class="action-btn" href="${reviewsLink}" target="_blank" rel="noopener noreferrer">Reviews</a>
-          <a class="action-btn" href="${mapLink}" target="_blank" rel="noopener noreferrer">Map</a>
+      <div class="card-main">
+        <div class="card-topline">
+          <span class="card-tag">Map-listed cafe</span>
+          <span class="favorite-pill">${cafe.vibe}</span>
         </div>
-        <button class="icon-btn ${cafe.saved ? "saved" : ""}" data-favorite-id="${cafe.id}" aria-label="Save ${escapeHtml(cafe.name)}">
-          ${cafe.saved ? "♥" : "+"}
+        <h3>${escapeHtml(cafe.name)}</h3>
+        <p class="card-address">${escapeHtml(cafe.address)}</p>
+        <div class="card-meta">
+          <span class="distance-pill">${distanceText}</span>
+          <span class="distance-pill">${getDistanceBand(cafe.distanceKm)}</span>
+        </div>
+      </div>
+      <div class="card-side">
+        <p class="card-note">Open Google Maps for live reviews, directions, and a closer look at this spot.</p>
+        <div class="card-actions">
+          <a class="action-btn action-btn-primary" href="${directionsLink}" target="_blank" rel="noopener noreferrer">Directions</a>
+          <a class="action-btn" href="${reviewsLink}" target="_blank" rel="noopener noreferrer">Reviews</a>
+          <a class="action-btn action-btn-wide" href="${mapLink}" target="_blank" rel="noopener noreferrer">Open Map</a>
+        </div>
+        <button type="button" class="save-btn ${cafe.saved ? "saved" : ""}" data-favorite-id="${cafe.id}" aria-pressed="${cafe.saved ? "true" : "false"}" aria-label="${escapeHtml(saveAriaLabel)}">
+          <span class="save-btn-mark">${cafe.saved ? "Saved" : "+"}</span>
+          <span>${saveLabel}</span>
         </button>
       </div>
     </article>
@@ -307,11 +308,12 @@ function createCafeCard(cafe) {
 function showLoading(message) {
   appState.cafes = [];
   cardsContainer.innerHTML = "";
+  emptyState.innerHTML = "<p>Tap into live location for nearby cafes now, or use city search when you want to scout another place.</p>";
   emptyState.classList.add("hidden");
   hideMessage();
   loading.querySelector("p").textContent = message;
   loading.classList.remove("hidden");
-  updateStatus("Searching live map data...");
+  updateStatus("Scanning live map cafes...");
 }
 
 function hideLoading() {
@@ -361,6 +363,18 @@ function getDistanceBand(distanceKm) {
   if (distanceKm < 3) return "Easy reach";
   if (distanceKm < 10) return "City range";
   return "Far away";
+}
+
+function buildResultsStatus(count) {
+  if (!appState.searchLabel) {
+    return count + " cafes ready";
+  }
+
+  if (userRealLat !== null && userRealLon !== null && appState.searchLabel !== "your live location") {
+    return count + " cafes around " + appState.searchLabel + " with distance from your live location";
+  }
+
+  return count + " cafes around " + appState.searchLabel;
 }
 
 function loadFavorites() {

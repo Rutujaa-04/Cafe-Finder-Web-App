@@ -17,30 +17,36 @@
   <div class="page-shell">
     <section class="hero">
       <div class="hero-copy">
-        <div class="eyebrow">City coffee discovery, reimagined</div>
-        <h1>Find cafes with a smarter flow, cleaner choices, and instant next steps.</h1>
+        <div class="eyebrow">GPS-first cafe radar</div>
+        <h1>Nearby cafes, the moment you want one.</h1>
         <p class="hero-text">
-          Search by city or jump in with your live location, then sort, save, and scan the best cafe options around
-          you without the basic template feel.
+          Built for morning runs, commute breaks, and spontaneous coffee stops. Live location is the main flow, while
+          city search stays ready when you want to scout another neighborhood or plan an intercity cafe hunt.
         </p>
 
+        <div class="signal-row" aria-label="Core experience highlights">
+          <span class="signal-chip">GPS-first discovery</span>
+          <span class="signal-chip">Up to 50 map-listed cafes</span>
+          <span class="signal-chip">Open live reviews on Maps</span>
+        </div>
+
         <div class="hero-actions">
-          <button id="location-btn" class="btn btn-primary">Use My Location</button>
-          <button class="btn btn-secondary" data-scroll-target="#search-panel">Start Exploring</button>
+          <button id="location-btn" class="btn btn-primary">Find Cafes Near Me</button>
+          <button class="btn btn-secondary" data-scroll-target="#search-panel">Search Another City</button>
         </div>
 
         <div class="hero-stats" aria-label="Platform highlights">
           <div class="stat-card">
-            <span class="stat-value">12</span>
-            <span class="stat-label">Live results per search</span>
+            <span class="stat-value">50</span>
+            <span class="stat-label">Map-listed cafes per search</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">3</span>
-            <span class="stat-label">Ways to refine the list</span>
+            <span class="stat-value">GPS</span>
+            <span class="stat-label">Primary discovery mode</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">1</span>
-            <span class="stat-label">Tap to save favorites</span>
+            <span class="stat-value">Maps</span>
+            <span class="stat-label">Reviews and directions access</span>
           </div>
         </div>
       </div>
@@ -48,48 +54,73 @@
       <div class="hero-panel">
         <div class="panel-glow panel-glow-top"></div>
         <div class="panel-glow panel-glow-bottom"></div>
+        <div class="bean-orbit" aria-hidden="true">
+          <span class="bean bean-a"></span>
+          <span class="bean bean-b"></span>
+          <span class="bean bean-c"></span>
+          <span class="bean bean-d"></span>
+        </div>
         <div class="panel-card" id="search-panel">
           <div class="panel-head">
-            <span class="panel-kicker">Search flow</span>
-            <h2>Plan your next coffee run</h2>
-            <p>Use a city, choose a quick pick, or let the browser locate you.</p>
+            <span class="panel-kicker">Primary Flow</span>
+            <h2>Start with where you are</h2>
+            <p>Open nearby cafes first, then switch to city search whenever you want a broader destination board.</p>
+          </div>
+
+          <div class="location-spotlight">
+            <div class="spotlight-copy">
+              <strong>Nearby mode</strong>
+              <p>Best for runs, walks, office breaks, and fast coffee decisions.</p>
+            </div>
+            <span class="spotlight-badge">Live GPS</span>
           </div>
 
           <div class="manual-search">
-            <label class="field-label" for="city-input">Search a city</label>
+            <label class="field-label" for="city-input">Search another city</label>
             <div class="field-row">
-              <input type="text" id="city-input" placeholder="Try New York, Tokyo, Paris..." />
+              <input type="text" id="city-input" placeholder="Try Mumbai, Surat, Bangalore, Pune..." />
               <button id="search-btn" class="btn btn-accent">Search</button>
             </div>
           </div>
 
           <div class="quick-search" aria-label="Popular city shortcuts">
-            <span class="field-label">Quick picks</span>
+            <span class="field-label">Quick city jumps</span>
             <div class="chip-row">
-              <button class="chip" data-city="New York">New York</button>
-              <button class="chip" data-city="London">London</button>
-              <button class="chip" data-city="Tokyo">Tokyo</button>
-              <button class="chip" data-city="Paris">Paris</button>
-              <button class="chip" data-city="Melbourne">Melbourne</button>
-              <button class="chip" data-city="Seattle">Seattle</button>
               <button class="chip" data-city="Mumbai">Mumbai</button>
               <button class="chip" data-city="Delhi">Delhi</button>
+              <button class="chip" data-city="Surat">Surat</button>
               <button class="chip" data-city="Bangalore">Bangalore</button>
+              <button class="chip" data-city="Pune">Pune</button>
+              <button class="chip" data-city="Ahmedabad">Ahmedabad</button>
+              <button class="chip" data-city="Goa">Goa</button>
+              <button class="chip" data-city="London">London</button>
+              <button class="chip" data-city="Tokyo">Tokyo</button>
+            </div>
+          </div>
+
+          <div class="panel-badges" aria-label="Search details">
+            <div class="panel-badge">
+              <span>50 spots</span>
+              <p>Pulls a broader map range so lesser-known cafes can show up too.</p>
+            </div>
+            <div class="panel-badge">
+              <span>Reviews</span>
+              <p>Jump out to Google Maps when you want live reviews and directions.</p>
             </div>
           </div>
 
           <div class="flow-notes">
             <div class="flow-step">
               <span>01</span>
-              <p>Pick a city or use your live location.</p>
+              <p>Use live location first for instant nearby cafe discovery.</p>
             </div>
             <div class="flow-step">
               <span>02</span>
-              <p>Sort by vibe, distance, or alphabetically.</p>
+              <p>Browse up to 50 cafes from map data, including hidden local finds.</p>
             </div>
             <div class="flow-step">
               <span>03</span>
-              <p>Save favorites and jump to the map.</p>
+              <p>Save favorites, open directions, and check reviews on Maps.</p>
             </div>
           </div>
         </div>
@@ -99,8 +130,9 @@
     <main class="results-shell">
       <section class="results-topbar">
         <div>
-          <div id="results-status" class="status-pill">Waiting for your first search</div>
-          <h2>Curated cafe results</h2>
+          <div id="results-status" class="status-pill">Nearby search ready</div>
+          <h2>Nearby cafe board</h2>
+          <p class="results-note">Live location comes first. City search stays available when you want to plan farther out.</p>
         </div>
 
         <div class="results-actions">
@@ -117,22 +149,22 @@
       </section>
 
       <section class="refine-bar" aria-label="Refine results">
-        <button class="filter-chip active" data-range="all">All places</button>
-        <button class="filter-chip" data-range="1">Within 1 km</button>
-        <button class="filter-chip" data-range="3">Within 3 km</button>
-        <button class="filter-chip" data-range="5">Within 5 km</button>
+        <button class="filter-chip active" data-range="all">All cafes</button>
+        <button class="filter-chip" data-range="1">Walkable</button>
+        <button class="filter-chip" data-range="3">Quick hop</button>
+        <button class="filter-chip" data-range="5">Coffee mission</button>
       </section>
 
       <div id="loading" class="loading-state hidden" aria-live="polite">
         <div class="loading-orb"></div>
-        <p>Scanning the map for standout cafes...</p>
+        <p>Scanning the map for nearby coffee stops...</p>
       </div>
 
       <div id="error-message" class="message-box hidden" role="alert"></div>
 
       <section id="results-section" class="results-section">
         <div id="empty-state" class="empty-state">
-          <p>Search a city or use your location to generate an interactive cafe board.</p>
+          <p>Tap into live location for nearby cafes now, or use city search when you want to scout another place.</p>
         </div>
         <div id="cards-container" class="cards-grid"></div>
       </section>
