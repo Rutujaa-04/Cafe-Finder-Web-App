@@ -14,6 +14,10 @@ const scrollButtons = document.querySelectorAll("[data-scroll-target]");
 
 const FAVORITES_KEY = "cafe-finder-favorites";
 
+// This will store YOUR real GPS location for accurate distance calculation
+let userRealLat = null;
+let userRealLon = null;
+
 const appState = {
   cafes: [],
   searchLabel: "",
@@ -22,6 +26,21 @@ const appState = {
   view: "grid",
   favorites: new Set(loadFavorites())
 };
+
+// Silently grab user's real GPS location in background on page load
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      userRealLat = position.coords.latitude;
+      userRealLon = position.coords.longitude;
+    },
+    function () {
+      // If user denies location, distances will calculate from searched city center
+      userRealLat = null;
+      userRealLon = null;
+    }
+  );
+}
 
 locationBtn.addEventListener("click", handleLocationSearch);
 searchBtn.addEventListener("click", () => runCitySearch(cityInput.value.trim()));
@@ -118,12 +137,7 @@ function runCitySearch(city) {
 function getCityCoords(city) {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`;
 
-  fetch(url, {
-    headers: {
-      "Accept-Language": "en",
-      "User-Agent": "CafeFinderApp/2.0"
-    }
-  })
+  fetch(url)
     .then((response) => response.json())
     .then((data) => {
       if (!data.length) {
@@ -145,12 +159,8 @@ function searchCafesByCoords(lat, lon, label) {
   const delta = 0.05;
   const url = `https://nominatim.openstreetmap.org/search?q=cafe&format=json&limit=12&bounded=1&viewbox=${lon - delta},${lat + delta},${lon + delta},${lat - delta}`;
 
-  fetch(url, {
-    headers: {
-      "Accept-Language": "en",
-      "User-Agent": "CafeFinderApp/2.0"
-    }
-  })
+  setTimeout(function () {
+  fetch(url)
     .then((response) => response.json())
     .then((data) => {
       hideLoading();
@@ -168,12 +178,19 @@ function searchCafesByCoords(lat, lon, label) {
     .catch(() => {
       showError("Cafe search failed. Please try again in a moment.");
     });
+    }, 1000);
 }
 
 function normalizeCafe(cafe, originLat, originLon) {
   const lat = parseFloat(cafe.lat);
   const lon = parseFloat(cafe.lon);
-  const distanceKm = getDistanceKm(originLat, originLon, lat, lon);
+
+  // Always use real GPS location for distance if available
+  // Otherwise fall back to searched city center
+  const fromLat = userRealLat !== null ? userRealLat : originLat;
+  const fromLon = userRealLon !== null ? userRealLon : originLon;
+
+  const distanceKm = getDistanceKm(fromLat, fromLon, lat, lon);
   const name = cafe.display_name.split(",")[0];
 
   return {
