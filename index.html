@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cafe Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">City coffee discovery, reimagined</div>
+        <h1>Find cafes with a smarter flow, cleaner choices, and instant next steps.</h1>
+        <p class="hero-text">
+          Search by city or jump in with your live location, then sort, save, and scan the best cafe options around
+          you without the basic template feel.
+        </p>
+
+        <div class="hero-actions">
+          <button id="location-btn" class="btn btn-primary">Use My Location</button>
+          <button class="btn btn-secondary" data-scroll-target="#search-panel">Start Exploring</button>
+        </div>
+
+        <div class="hero-stats" aria-label="Platform highlights">
+          <div class="stat-card">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Live results per search</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">3</span>
+            <span class="stat-label">Ways to refine the list</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">1</span>
+            <span class="stat-label">Tap to save favorites</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <div class="panel-glow panel-glow-top"></div>
+        <div class="panel-glow panel-glow-bottom"></div>
+        <div class="panel-card" id="search-panel">
+          <div class="panel-head">
+            <span class="panel-kicker">Search flow</span>
+            <h2>Plan your next coffee run</h2>
+            <p>Use a city, choose a quick pick, or let the browser locate you.</p>
+          </div>
+
+          <div class="manual-search">
+            <label class="field-label" for="city-input">Search a city</label>
+            <div class="field-row">
+              <input type="text" id="city-input" placeholder="Try New York, Tokyo, Paris..." />
+              <button id="search-btn" class="btn btn-accent">Search</button>
+            </div>
+          </div>
+
+          <div class="quick-search" aria-label="Popular city shortcuts">
+            <span class="field-label">Quick picks</span>
+            <div class="chip-row">
+              <button class="chip" data-city="New York">New York</button>
+              <button class="chip" data-city="London">London</button>
+              <button class="chip" data-city="Tokyo">Tokyo</button>
+              <button class="chip" data-city="Paris">Paris</button>
+              <button class="chip" data-city="Melbourne">Melbourne</button>
+              <button class="chip" data-city="Seattle">Seattle</button>
+            </div>
+          </div>
+
+          <div class="flow-notes">
+            <div class="flow-step">
+              <span>01</span>
+              <p>Pick a city or use your live location.</p>
+            </div>
+            <div class="flow-step">
+              <span>02</span>
+              <p>Sort by vibe, distance, or alphabetically.</p>
+            </div>
+            <div class="flow-step">
+              <span>03</span>
+              <p>Save favorites and jump to the map.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="results-shell">
+      <section class="results-topbar">
+        <div>
+          <div id="results-status" class="status-pill">Waiting for your first search</div>
+          <h2>Curated cafe results</h2>
+        </div>
+
+        <div class="results-actions">
+          <div class="view-switch" role="group" aria-label="Result view options">
+            <button class="view-btn active" data-view="grid">Grid</button>
+            <button class="view-btn" data-view="list">List</button>
+          </div>
+          <select id="sort-select" aria-label="Sort cafes">
+            <option value="distance">Sort: Closest first</option>
+            <option value="name">Sort: Name A-Z</option>
+            <option value="favorites">Sort: Saved first</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="refine-bar" aria-label="Refine results">
+        <button class="filter-chip active" data-range="all">All places</button>
+        <button class="filter-chip" data-range="1">Within 1 km</button>
+        <button class="filter-chip" data-range="3">Within 3 km</button>
+        <button class="filter-chip" data-range="5">Within 5 km</button>
+      </section>
+
+      <div id="loading" class="loading-state hidden" aria-live="polite">
+        <div class="loading-orb"></div>
+        <p>Scanning the map for standout cafes...</p>
+      </div>
+
+      <div id="error-message" class="message-box hidden" role="alert"></div>
+
+      <section id="results-section" class="results-section">
+        <div id="empty-state" class="empty-state">
+          <p>Search a city or use your location to generate an interactive cafe board.</p>
+        </div>
+        <div id="cards-container" class="cards-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
