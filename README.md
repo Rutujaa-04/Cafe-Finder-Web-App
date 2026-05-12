@@ -62,13 +62,11 @@ City search is available as a secondary flow for scouting cafes in another neigh
 ---
 
 ## Project structure
-'''
 cafe-finder/
 ├── index.html       # App structure and layout
 ├── styles.css       # All styling, theming, animations, and responsive design
 ├── script.js        # App logic, API calls, scoring, state management
 └── README.md       
-'''
 
 ## Future improvements
 
